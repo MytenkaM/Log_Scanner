@@ -28,7 +28,7 @@ for event in events:
 
 print(failures)
 
-THRESHOLD = 2
+THRESHOLD = 10
 for ip, count in failures.items():
     if count >=THRESHOLD:
         print(f'{ip} failed {count} login attempts')
