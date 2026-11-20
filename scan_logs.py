@@ -28,7 +28,15 @@ for event in events:
 
 print(failures)
 
-THRESHOLD = 2
+THRESHOLD = 10
 for ip, count in failures.items():
     if count >=THRESHOLD:
         print(f'{ip} failed {count} login attempts')
+
+from datetime import datetime
+
+t1 = datetime.strptime('2026-11-20 09:14:40', '%Y-%m-%d %H:%M:%S')
+t2 = datetime.strptime('2026-11-20 09:14:52', '%Y-%m-%d %H:%M:%S')
+
+gap = t2 - t1
+print(gap.total_seconds()) # 12.0
