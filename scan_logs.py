@@ -44,3 +44,16 @@ for event in events:
         failures.setdefault(ip,[]).append(time)
 
 print(failures)
+
+THRESHOLD = 10
+WINDOW_SECONDS = 60
+
+for ip, times in failures.items():
+    times.sort()
+    for i in range(len(times) -THRESHOLD + 1):
+        first = times [i]
+        last = times [i + THRESHOLD - 1]
+        gap = (last - first).total_seconds()
+        if gap <= WINDOW_SECONDS:
+            print(f'Burst detected from {ip} starting at {first}')
+            break
