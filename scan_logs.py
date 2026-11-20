@@ -35,8 +35,12 @@ for ip, count in failures.items():
 
 from datetime import datetime
 
-t1 = datetime.strptime('2026-11-20 09:14:40', '%Y-%m-%d %H:%M:%S')
-t2 = datetime.strptime('2026-11-20 09:14:52', '%Y-%m-%d %H:%M:%S')
+failures = {}
 
-gap = t2 - t1
-print(gap.total_seconds()) # 12.0
+for event in events:
+    if event['status'] == 'FAILED':
+        ip = event['ip']
+        time = datetime.strptime(event['time'], '%Y-%m-%d %H:%M:%S')
+        failures.setdefault(ip,[]).append(time)
+
+print(failures)
