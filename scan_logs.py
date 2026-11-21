@@ -48,6 +48,8 @@ print(failures)
 THRESHOLD = 10
 WINDOW_SECONDS = 60
 
+flagged = {}
+
 for ip, times in failures.items():
     times.sort()
     for i in range(len(times) -THRESHOLD + 1):
@@ -56,4 +58,14 @@ for ip, times in failures.items():
         gap = (last - first).total_seconds()
         if gap <= WINDOW_SECONDS:
             print(f'Burst detected from {ip} starting at {first}')
+            flagged[ip] = first
+            print(flagged)
             break
+
+for event in events:
+    if event['status'] == 'SUCCESS':
+        ip = event['ip']
+        user = event['user']
+        time = datetime.strptime(event['time'], '%Y-%m-%d %H:%M:%S')
+        if ip in flagged and time >= flagged[ip]:
+            print(f'High priority Alert! succesful login by {user} from {ip} at {time}')
