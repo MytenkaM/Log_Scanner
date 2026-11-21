@@ -1,3 +1,9 @@
+from datetime import datetime
+THRESHOLD = 10
+WINDOW_SECONDS = 60
+
+# Reading the file
+
 def parse_line(line):
     parts = line.split()
     event = {
@@ -16,24 +22,7 @@ with open(r'sample_auth.log') as file:
             continue
         events.append(parse_line(line))
 
-print(len(events))
-print(events[0])
-
-status = ['SUCCESS', 'FAILED','SUCCESS','FAILED','FAILED','SUCCESS','FAILED','FAILED','FAILED','FAILED','FAILED','FAILED','FAILED','FAILED','FAILED','FAILED','SUCCESS','FAILED','SUCCESS','SUCCESS']
-failures = {}
-
-for event in events:
-    if event['status'] == 'FAILED':
-        failures[event['ip']] = failures.get(event['ip'],0) +1
-
-print(failures)
-
-THRESHOLD = 10
-for ip, count in failures.items():
-    if count >=THRESHOLD:
-        print(f'{ip} failed {count} login attempts')
-
-from datetime import datetime
+# count failed logins
 
 failures = {}
 
@@ -43,10 +32,7 @@ for event in events:
         time = datetime.strptime(event['time'], '%Y-%m-%d %H:%M:%S')
         failures.setdefault(ip,[]).append(time)
 
-print(failures)
-
-THRESHOLD = 10
-WINDOW_SECONDS = 60
+# Burst detection
 
 flagged = {}
 
@@ -57,10 +43,12 @@ for ip, times in failures.items():
         last = times [i + THRESHOLD - 1]
         gap = (last - first).total_seconds()
         if gap <= WINDOW_SECONDS:
-            print(f'Burst detected from {ip} starting at {first}')
             flagged[ip] = first
-            print(flagged)
             break
+
+# checking for compromised logins
+
+compromised = []
 
 for event in events:
     if event['status'] == 'SUCCESS':
@@ -68,4 +56,24 @@ for event in events:
         user = event['user']
         time = datetime.strptime(event['time'], '%Y-%m-%d %H:%M:%S')
         if ip in flagged and time >= flagged[ip]:
-            print(f'High priority Alert! succesful login by {user} from {ip} at {time}')
+            compromised.append(f'{user} from {ip} at {time}')
+
+# The report
+print('=' * 30)
+print('LOGIN LOG SCAN REPORT')
+print('=' * 30)
+print(f'events analysed: {len(events)}')
+print()
+if flagged:
+    print('Suspicious activity:')
+    for ip, start in flagged.items():
+        print(f' - {ip} (burst began {start})')
+else:
+    print('No suspicious activity detected')
+print()
+if compromised:
+    print('Possible compromised accounts:')
+    for item in compromised:
+        print(f' - {item}')
+else:
+    print('No compromised accounts detected')
