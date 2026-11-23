@@ -8,24 +8,24 @@ A beginner python project which scans a authentication log and flags possible br
 - Raises an alert if a flagged IP ##logs in later successfully##, as that account may be compromised 
 This log scanner has a threshold of 10 failed attempts within a time frame of 60s
 
-## hgow to run it
+## how to run it
 
-put 'smample_auth.log' in the same folder as the script, then run:
-'''
+put `sample_auth.log` in the same folder as the script, then run:
+```
 python scan_logs.py
-'''
+```
 ## Log format
 One event per line:
 
-'''
+```
 2026-11-20 10:15:00 LOGIN FAILED user=admin ip=203.0.113.45
-'''
+```
 
-The data in 'sample_auth.log' has been made up for testing
+The data in `sample_auth.log` has been made up for testing
 
 ## Example output
 
-'''
+```
 ==============================
 LOGIN LOG SCAN REPORT
 ==============================
@@ -36,7 +36,7 @@ Suspicious activity:
 
 Possible compromised accounts:
  - ben from 203.42.100.43 at 2026-11-20 10:35:44
-'''
+```
 
 ## Ideas for next steps
 - add automated tests
